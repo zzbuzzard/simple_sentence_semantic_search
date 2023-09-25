@@ -61,7 +61,7 @@ with open(GOAL_SENTENCES_PATH, "r") as f:
     print("\n".join(goal_sentences))
 
 print()
-print(" sentences...")
+print("Encoding sentences...")
 goal_encs = model.encode(goal_sentences)
 # goal_enc = np.mean(goal_encs, axis=0)
 # goal_enc /= np.linalg.norm(goal_enc)
@@ -92,7 +92,7 @@ scores = np.matmul(goal_encs, encs.T)
 print()
 
 # Mean score = mean similarity over all goal sentences
-mean_scores = np.mean(scores, axis=0)
+mean_scores = np.max(scores, axis=0)
 
 # Print all sentences in descending mean score order
 pairs = list(zip(list(mean_scores), range(len(all_sentences))))
