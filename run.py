@@ -61,7 +61,7 @@ with open(GOAL_SENTENCES_PATH, "r") as f:
     print("\n".join(goal_sentences))
 
 print()
-print("Encoding goal sentences...")
+print(" sentences...")
 goal_encs = model.encode(goal_sentences)
 # goal_enc = np.mean(goal_encs, axis=0)
 # goal_enc /= np.linalg.norm(goal_enc)
@@ -76,18 +76,17 @@ for file in os.listdir(DATA_PATH):
     print(f"Reading file '{file}'...")
     path = os.path.join(DATA_PATH, file)
 
-    with open(path, "r") as f:
+    with open(path, "r", errors="ignore") as f:
         text = "\n".join(f.readlines())
         sentences = sentence_split(text)
         print(len(sentences), "sentences")
-
         all_sentences += sentences
 
 print()
 print(f"Finished reading data, {len(all_sentences)} sentences total.")
 print()
 print("Encoding sentences...")
-encs = model.encode(sentences)
+encs = model.encode(all_sentences)
 print("Computing scores...")
 scores = np.matmul(goal_encs, encs.T)
 print()
@@ -96,19 +95,18 @@ print()
 mean_scores = np.mean(scores, axis=0)
 
 # Print all sentences in descending mean score order
-pairs = list(zip(list(mean_scores), range(len(sentences))))
+pairs = list(zip(list(mean_scores), range(len(all_sentences))))
 pairs = sorted(pairs, key=lambda a:-a[0])
 print(f"Writing to file {output_path}...")
 with open(output_path, "w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(("Score","Index","Sentence"))
     for score,ind in pairs:
-        writer.writerow((str(score),str(ind),f"\"{sentences[ind]}\""))
-        # print(score,"\t",sentences[ind])
+        writer.writerow((str(score),str(ind),f"\"{all_sentences[ind]}\""))
 print("Done")
 
 # Display a graph showing the similarity score for each goal sentence
-xs = list(range(len(sentences)))
+xs = list(range(len(all_sentences)))
 for i in range(len(goal_sentences)):
     plt.plot(xs, scores[i], label=goal_sentences[i])
 plt.legend()
