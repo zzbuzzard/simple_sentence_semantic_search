@@ -6,12 +6,16 @@ from sentence_transformers import SentenceTransformer
 import csv
 import argparse
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(prog="Simple sentence similarity",
+                                 description="Ranks the sentences in a piece of text according to their semantic similarity to a given list of goal sentences using a sentence transformer neural network.")
 parser.add_argument("out", help="Path for the results to be saved to in CSV format.", type=str)
+parser.add_argument("-ml", "--min-length", help="Minimum length of a sentence.", type=int, default=8)
 args = parser.parse_args()
 output_path = args.out
 if not output_path.endswith(".csv"):
     output_path += ".csv"
+
+min_length = args.min_length
 
 if os.path.isfile(output_path):
     print("Warning: output is overwriting an existing file [enter to continue]")
@@ -23,7 +27,7 @@ DATA_PATH = "data/"
 # Splits a piece of text into a list of sentences
 def sentence_split(text):
     def flt(x):
-        return len(x) > 5
+        return len(x) >= min_length
     text = text.replace("\n", " ")  # New lines are replaced by spaces
     text = text.replace("  ", " ")  # Double spaces removed
     xs = text.split(".")
