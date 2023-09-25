@@ -1,0 +1,5 @@
+matplotlib
+numpy
+torch
+sentence_transformers
+argparse
