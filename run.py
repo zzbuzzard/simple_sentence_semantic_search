@@ -26,11 +26,15 @@ DATA_PATH = "data/"
 
 # Splits a piece of text into a list of sentences
 def sentence_split(text):
+    def mp(x):
+        x = x.strip()
+        return x
     def flt(x):
         return len(x) >= min_length
     text = text.replace("\n", " ")  # New lines are replaced by spaces
     text = text.replace("  ", " ")  # Double spaces removed
     xs = text.split(".")
+    xs = map(mp, xs)
     xs = filter(flt, xs)            # Remove short sentences as they're probably erroneous
     return list(xs)
 
@@ -61,7 +65,7 @@ with open(GOAL_SENTENCES_PATH, "r") as f:
     print("\n".join(goal_sentences))
 
 print()
-print("Encoding sentences...")
+print("Encoding goal sentences...")
 goal_encs = model.encode(goal_sentences)
 # goal_enc = np.mean(goal_encs, axis=0)
 # goal_enc /= np.linalg.norm(goal_enc)
